@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../ptk"
+		},
+		{
+			"path": "../ylz"
+		},
+		{
+			"path": "../yonglezang"
+		},
+		{
+			"path": "src"
+		},
+		{
+			"path": "../ylz/src"
+		}
+	]
+}
