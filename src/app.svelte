@@ -2,8 +2,10 @@
   import {downloadToCache} from 'ptk/platform/downloader.js'
   import {ZipStore} from 'ptk/zip/zipstore.ts';
   import  FolioView  from '../../offtextfolio/folio/folioview.svelte';
+  import  SimpleFolioView  from '../../offtextfolio/folio/simplefolioview.svelte';
   let CacheName='offtextfolio';
   let thezip=null;
+  let imageIndex=0;
   let downloading='';
 
   const addressFromUrl=()=>{
@@ -31,19 +33,63 @@
     const zip=new ZipStore(buf);
     thezip=zip;
   }
-setTimeout(init,500);
+setTimeout(init,100);
 </script>
 
-<main>
-<div class="app"><div class="pane">
-{#if thezip}
-  <FolioView {thezip}/>
-{/if}
-</div>
-</div>
-</main>
 
+<div class="app">
+<table>
+<tbody>
+<tr class="top"><td colspan=2>{imageIndex}</td></tr>
+{#if thezip}
+<tr class="bottom">
+  <td class="left-view">
+    <SimpleFolioView {thezip} imgidx={imageIndex+1} showline={4}/> 
+  </td>
+  <td class="right-view" style:--sv-swipe-panel-height="95.5%">
+    <FolioView {thezip} bind:imageIndex/>
+  </td></tr>
+{/if}
+</tbody>
+</table>
+</div>
 <style>
-  .pane {background-color: blue;width:25vw}
-  main {width:100vw;height:100vh}
+ .app {width:100vw;height:100vh}
+ table{width:100%}
+ td{vertical-align: top;}
+ .top {height:15vh;background-color:gray}
+ .bottom {height:85vh;background-color:gray}
+ .left-view{width:17vw;height: 100%;}
+ .right-view{width:83vw;height: 100%;}
+  
+
+  * {
+      margin: 0;
+      padding: 0;
+    }
+      /* 手機外框容器 */
+    .app {
+      /* display: flex;
+      flex-direction: column; */
+      height: 100vh;
+      width: 100%;      
+      margin: 0 auto;
+    }
+    
+   /* 手機直向鎖定提示（選配） */
+    @media (orientation: landscape) {
+      .app::after {
+        content: "請切換至直向模式以獲得最佳體驗";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        font-size: 1.2rem;
+      }
+    }
+
 </style>
