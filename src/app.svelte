@@ -1,11 +1,15 @@
 <script lang="ts">
   import {downloadToCache} from 'ptk/platform/downloader.js'
   import {ZipStore} from 'ptk/zip/zipstore.ts';
-  import  FolioView  from '../../offtextfolio/folio/folioview.svelte';
-  import  SimpleFolioView  from '../../offtextfolio/folio/simplefolioview.svelte';
+  import FolioView  from '../../offtextfolio/folio/folioview.svelte';
+  import { nextImageIndex }  from '../../offtextfolio/folio/ziputils.js';
+  import SimpleFolioView  from '../../offtextfolio/folio/simplefolioview.svelte';
+  import Toolbar from './toolbar.svelte';
+  import TranscriptLayer from './transcriptlayer.svelte';
+    import { onMount } from 'svelte';
   let CacheName='offtextfolio';
-  let thezip=null;
-  let imageIndex=0;
+  let thezip=null,totalpages=0,mp3='';
+  let imageIndex=0,frame={left:0,top:0,width:0,height:0};
   let downloading='';
 
   const addressFromUrl=()=>{
@@ -16,12 +20,13 @@
     return address;
   }
   const init=async()=>{
-    const address=addressFromUrl();
-    let [src,folio,line,char]=address.split('.');
+    const params = new URLSearchParams(addressFromUrl());
+    const src=params.get('src')||'sdp1';
+    mp3='baudio/'+(params.get('mp3')||src);
 
     let host='folio/';
         const zipfilename=src+'.zip'
-    const res=await downloadToCache(CacheName,host+zipfilename,(msg: string)=>{
+        const res=await downloadToCache(CacheName,host+zipfilename,(msg: string)=>{
         downloading=zipfilename+ " "+msg;
     });
     if (!res||!res.ok) {
@@ -32,22 +37,35 @@
     const buf=await res.arrayBuffer();
     const zip=new ZipStore(buf);
     thezip=zip;
+    totalpages=thezip.files.length;
   }
-setTimeout(init,100);
+
+onMount(()=>{
+  init();
+  setTimeout(()=>{
+    const rightview=document.getElementsByClassName('right-view')[0]
+    const rect=rightview.getBoundingClientRect();
+    frame.top=rect.top;
+    frame.left=rect.left;
+  },50)
+})
 </script>
 
 
 <div class="app">
 <table>
 <tbody>
-<tr class="top"><td colspan=2>{imageIndex}</td></tr>
+<tr class="top"><td colspan=2><Toolbar {imageIndex} {mp3}/></td></tr>
 {#if thezip}
 <tr class="bottom">
   <td class="left-view">
-    <SimpleFolioView {thezip} imgidx={imageIndex+1} showline={4}/> 
+    
+    <SimpleFolioView {thezip} imageIndex={nextImageIndex(totalpages, imageIndex)} showline={4}/> 
   </td>
   <td class="right-view" style:--sv-swipe-panel-height="95.5%">
-    <FolioView {thezip} bind:imageIndex/>
+  <TranscriptLayer {frame} blinkline={0}/>
+    <FolioView {thezip} bind:imageIndex bind:frame/>
+    
   </td></tr>
 {/if}
 </tbody>
@@ -91,5 +109,4 @@ setTimeout(init,100);
         font-size: 1.2rem;
       }
     }
-
 </style>
