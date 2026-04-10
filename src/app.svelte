@@ -8,9 +8,9 @@
   import TranscriptLayer from './transcriptlayer.svelte';
     import { onMount } from 'svelte';
   let CacheName='offtextfolio';
-  let thezip=null,totalpages=0,mp3='';
-  let imageIndex=0,frame={left:0,top:0,width:0,height:0};
-  let downloading='';
+  let thezip=$state(null),totalpages=$state(0),mp3=$state('');
+  let imageIndex=$state(0),frame=$state({left:0,top:0,width:0,height:0});
+  let downloading=$state('');
 
   const addressFromUrl=()=>{
     let hash=window.location.hash;
@@ -36,7 +36,7 @@
     downloading='';
     const buf=await res.arrayBuffer();
     const zip=new ZipStore(buf);
-    thezip=zip;
+    thezip =zip;
     totalpages=thezip.files.length;
   }
 
@@ -44,11 +44,13 @@ onMount(()=>{
   init();
   setTimeout(()=>{
     const rightview=document.getElementsByClassName('right-view')[0]
+    if (!rightview) return;
     const rect=rightview.getBoundingClientRect();
-    frame.top=rect.top;
+    frame.top=rect.top;//just set the top left , width, height resolve in folioview
     frame.left=rect.left;
   },50)
 })
+
 </script>
 
 
@@ -59,13 +61,11 @@ onMount(()=>{
 {#if thezip}
 <tr class="bottom">
   <td class="left-view">
-    
-    <SimpleFolioView {thezip} imageIndex={nextImageIndex(totalpages, imageIndex)} showline={4}/> 
+    <SimpleFolioView {thezip} imageIndex={nextImageIndex(totalpages, imageIndex)} {frame} showline={4}/> 
   </td>
   <td class="right-view" style:--sv-swipe-panel-height="95.5%">
   <TranscriptLayer {frame} blinkline={0}/>
     <FolioView {thezip} bind:imageIndex bind:frame/>
-    
   </td></tr>
 {/if}
 </tbody>
@@ -77,8 +77,8 @@ onMount(()=>{
  td{vertical-align: top;}
  .top {height:15vh;background-color:gray}
  .bottom {height:85vh;background-color:gray}
- .left-view{width:17vw;height: 100%;}
- .right-view{width:83vw;height: 100%;}
+ .left-view{width:17%;height: 100%;}
+ .right-view{width:83%;height: 100%;}
   
 
   * {
