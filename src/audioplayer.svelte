@@ -1,21 +1,28 @@
 <script lang="ts">
-    let audioplayer=$state(null);
-    let playing=$state(false);
-    let {mp3} = $props();
-    const togglePlay=()=>{
-        if (!audioplayer) return;
-        if (audioplayer.paused) audioplayer.play();
-        else audioplayer.pause();
-        playing=!audioplayer.paused;
-        
-    }
+import {theaudio,playing} from './store.js'
+
+let {mp3} = $props();
+const togglePlay=()=>{
+    let audio=$theaudio;
+    if (!audio) return;
+    if (audio.paused) audio.play();
+    else audio.pause();
+    playing.set(!audio.paused);   
+}
+const onplay=()=>{
+    playing.set(true)
+}
+const onpause=()=>{
+    playing.set(false)
+}
+const setAudio=(ele:HTMLAudioElement)=>{
+    theaudio.set(ele);
+}
 </script>
 
-<audio bind:this={audioplayer}>
+<audio use:setAudio onplay={onplay} onpause={onpause} >
     <source src={mp3+'.mp3'}/>
 </audio>
-{#if audioplayer}
-    <span aria-hidden="true"  onclick={()=>togglePlay()}>{playing?'Stop':'Play'}</span>
+{#if $theaudio}
+    <span aria-hidden="true"  onclick={()=>togglePlay()}>{$playing?'Stop':'Play'}</span>
 {/if}
-
-

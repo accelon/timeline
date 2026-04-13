@@ -27,7 +27,7 @@ const stylelinestamped=(frame,nline)=>{
     return out.join(';')
 }
 const lines=[0,1,2,3,4,5]
-// $effect(()=>console.log('transcriptlayer render',frame,'blinkline',blinkline))
+
 </script>
 {#each lines as nline}
 <div class={"linestamped linestamped"+linestamped[nline]}
@@ -47,11 +47,11 @@ const lines=[0,1,2,3,4,5]
 .linestamped {z-index:8;position:absolute;user-select:none;    }
 .linestamped0 {background-color:rgba(0, 0, 0, 0)}
 .linestamped1 {background:rgba(98, 203, 6, 0.9)}
-.linestamped2 {
+.linestamped2 { 
   animation-name: blinker;
   animation-iteration-count: infinite;
   animation-duration: 1s;
-  background:rgba(98, 203, 6, 0.9)
+  background:rgba(183, 203, 6, 0.9)
 }
 .linestamped3 {background:rgba(255, 0, 0, 0.9)}
 .transcript {z-index:8;position:absolute;

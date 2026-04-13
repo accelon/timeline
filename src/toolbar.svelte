@@ -1,9 +1,11 @@
 <script lang="ts">
 import AudioPlayer from './audioplayer.svelte'
 import StampIndicator from './stampindicator.svelte'
-let {imageIndex,mp3}=$props()
+let {mp3}=$props()
+import {nfolio,nline} from './store.js'
+let player;
 
 </script>
-<AudioPlayer {mp3}/>
+<AudioPlayer bind:player {mp3}/>
 <StampIndicator/>
-{imageIndex}
+{$nfolio}-{$nline}

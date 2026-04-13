@@ -8,11 +8,13 @@
   import TranscriptLayer from './transcriptlayer.svelte';
   import { onMount } from 'svelte';
   import StampButton from './stampbutton.svelte';
+  import {addStamp, initstamp} from './stamp.js'
+  import {nfolio,nline,linestamped,totalpages} from './store.js'
   let CacheName='offtextfolio';
-  let thezip=$state(null),totalpages=$state(0),mp3=$state('');
-  let imageIndex=$state(0),frame=$state({left:0,top:0,width:0,height:0});
+  let thezip=$state(null),mp3=$state('');
+  let frame=$state({left:0,top:0,width:0,height:0});
   let downloading=$state('');
-
+  
   const addressFromUrl=()=>{
     let hash=window.location.hash;
     if (hash[0]=='#') hash=hash.slice(1);
@@ -38,9 +40,15 @@
     const buf=await res.arrayBuffer();
     const zip=new ZipStore(buf);
     thezip =zip;
-    totalpages=thezip.files.length;
+    totalpages.set(thezip.files.length);
+    initstamp();
   }
-
+const onStamp=()=>{
+  addStamp();
+}
+const setImageIndex=(idx:number)=>{
+  nfolio.set(idx)
+}
 onMount(()=>{
   init();
   setTimeout(()=>{
@@ -58,16 +66,16 @@ onMount(()=>{
 <div class="app">
 <table>
 <tbody>
-<tr class="top"><td colspan=2><Toolbar {imageIndex} {mp3}/></td></tr>
+<tr class="top"><td colspan=2><Toolbar  {mp3}/></td></tr>
 {#if thezip}
 <tr class="bottom">
   <td class="left-view">
-    <SimpleFolioView {thezip} imageIndex={nextImageIndex(totalpages, imageIndex)} {frame} showline={4}/> 
+    <SimpleFolioView {thezip} imageIndex={($nfolio<$totalpages-1)?nextImageIndex(totalpages, $nfolio):-1} {frame} showline={4}/> 
   </td>
   <td class="right-view" style:--sv-swipe-panel-height="95.5%">
-  <TranscriptLayer {frame} blinkline={1} linestamped={[1,1,2,0,3,0]}/>
-    <FolioView {thezip} bind:imageIndex bind:frame/>
-    <StampButton {frame}/>
+  <TranscriptLayer {frame} blinkline={$nline} linestamped={$linestamped}/>
+    <FolioView {thezip} imageIndex={$nfolio} {setImageIndex} bind:frame/>
+`   <StampButton {frame} {onStamp}/>
   </td></tr>
 {/if}
 </tbody>
