@@ -1,9 +1,9 @@
 <script>
-let {frame={left:0,top:0,width:0,height:0},blinkline=0}=$props();
+let {frame={left:0,top:0,width:0,height:0},blinkline=1,linestamped=[0,0,0,0,0,0]}=$props();
+const folioline=5;
 
 const stylestring=(o)=>`left:${o.left}px;top:${o.top}px;width:${o.width}px;height:${o.height}px;`
 const stripstyle=(strip)=>{
-    let folioline=5;
     const w=frame.width/folioline;
     let out=[];
     out.push('position:absolute');
@@ -13,21 +13,49 @@ const stripstyle=(strip)=>{
     out.push('height:'+frame.height+'px');
     return out.join(';');
 }
-
+const stylelinestamped=(frame,nline)=>{ 
+    const w=frame.width/5;
+    let out=[];
+    out.push('position:absolute');
+    out.push('top:'+(frame.top-35)+'px');
+    if (nline<5) {
+        out.push('left:'+(w/3+frame.left+Math.floor( (folioline-nline-1)*w))+'px');
+    } else { //next page first line
+        out.push('left:'+(w/3)+'px')
+    }
+    
+    return out.join(';')
+}
+const lines=[0,1,2,3,4,5]
 // $effect(()=>console.log('transcriptlayer render',frame,'blinkline',blinkline))
 </script>
+{#each lines as nline}
+<div class={"linestamped linestamped"+linestamped[nline]}
+ style={stylelinestamped(frame,nline)}>　</div>
+{/each}
 <div class="transcript" style={stylestring(frame)} >
     <div class="strip blinker" style={stripstyle(blinkline)}></div>
 </div>
 <style>
+
 .strip {background:rgba(212, 194, 0, 0.4)}
 .blinker {
   animation-name: blinker;
   animation-iteration-count: infinite;
   animation-duration: 1s;
 }
-
-.transcript {z-index:8;position:absolute;user-select: none;overflow:hidden;pointer-events: none;user-select: none;}
+.linestamped {z-index:8;position:absolute;user-select:none;    }
+.linestamped0 {background-color:rgba(0, 0, 0, 0)}
+.linestamped1 {background:rgba(98, 203, 6, 0.9)}
+.linestamped2 {
+  animation-name: blinker;
+  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  background:rgba(98, 203, 6, 0.9)
+}
+.linestamped3 {background:rgba(255, 0, 0, 0.9)}
+.transcript {z-index:8;position:absolute;
+    overflow:hidden;pointer-events: none;user-select: none;}
 @keyframes blinker {
   50% {
     opacity: 0;

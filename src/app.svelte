@@ -6,7 +6,8 @@
   import SimpleFolioView  from '../../offtextfolio/folio/simplefolioview.svelte';
   import Toolbar from './toolbar.svelte';
   import TranscriptLayer from './transcriptlayer.svelte';
-    import { onMount } from 'svelte';
+  import { onMount } from 'svelte';
+  import StampButton from './stampbutton.svelte';
   let CacheName='offtextfolio';
   let thezip=$state(null),totalpages=$state(0),mp3=$state('');
   let imageIndex=$state(0),frame=$state({left:0,top:0,width:0,height:0});
@@ -64,8 +65,9 @@ onMount(()=>{
     <SimpleFolioView {thezip} imageIndex={nextImageIndex(totalpages, imageIndex)} {frame} showline={4}/> 
   </td>
   <td class="right-view" style:--sv-swipe-panel-height="95.5%">
-  <TranscriptLayer {frame} blinkline={0}/>
+  <TranscriptLayer {frame} blinkline={1} linestamped={[1,1,2,0,3,0]}/>
     <FolioView {thezip} bind:imageIndex bind:frame/>
+    <StampButton {frame}/>
   </td></tr>
 {/if}
 </tbody>
