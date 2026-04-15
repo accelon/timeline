@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import {downloadToCache} from 'ptk/platform/downloader.js'
   import {ZipStore} from 'ptk/zip/zipstore.ts';
   import FolioView  from '../../offtextfolio/folio/folioview.svelte';
@@ -6,12 +7,11 @@
   import SimpleFolioView  from '../../offtextfolio/folio/simplefolioview.svelte';
   import Toolbar from './toolbar.svelte';
   import TranscriptLayer from './transcriptlayer.svelte';
-  import { onMount } from 'svelte';
   import StampButton from './stampbutton.svelte';
   import {addStamp, initstamp} from './stamp.js'
-  import {nfolio,nline,linestamped,totalpages} from './store.js'
+  import {nfolio,nline,linestamped,totalpages,stamps, playing,recording, theaudioplayer} from './store.js'
   let CacheName='offtextfolio';
-  let thezip=$state(null),mp3=$state('');
+  let thezip=$state(null),mp3=$state(''),stampfile=$state('');
   let frame=$state({left:0,top:0,width:0,height:0});
   let downloading=$state('');
   
@@ -26,28 +26,38 @@
     const params = new URLSearchParams(addressFromUrl());
     const src=params.get('src')||'sdp1';
     mp3='baudio/'+(params.get('mp3')||src);
+    stampfile='timestamp/'+(params.get('stamp')||params.get('mp3')||src);
 
     let host='folio/';
-        const zipfilename=src+'.zip'
-        const res=await downloadToCache(CacheName,host+zipfilename,(msg: string)=>{
+    const zipfilename=src+'.zip'
+    const res=await downloadToCache(CacheName,host+zipfilename,(msg: string)=>{
         downloading=zipfilename+ " "+msg;
     });
+    
     if (!res||!res.ok) {
         downloading='error loading '+host+zipfilename;
         return;
     }
+    await loadZip(res);
     downloading='';
+    fetch(stampfile+'.json').then(res=>res.text()).then(text=>{        
+        initstamp(text);
+    }).catch(e=>{
+        initstamp();
+    })
+  }
+const loadZip=async (res)=>{
     const buf=await res.arrayBuffer();
     const zip=new ZipStore(buf);
     thezip =zip;
     totalpages.set(thezip.files.length);
-    initstamp();
-  }
+}
 const onStamp=()=>{
   addStamp();
 }
 const setImageIndex=(idx:number)=>{
   nfolio.set(idx)
+  nline.set(-1)
 }
 onMount(()=>{
   init();
@@ -59,6 +69,27 @@ onMount(()=>{
     frame.left=rect.left;
   },50)
 })
+const setPlayTime=(e)=>{
+  const line=Math.floor((e.clientX-frame.left)/(frame.width/5));
+  if (line<0||line>5) return;
+  const l=$totalpages-line;
+  const t=($stamps[$nfolio]||[])[l];
+  $theaudioplayer.currentTime=t;
+  if (!$playing) {
+    $theaudioplayer.play();
+  }
+  nline.set(l);
+}
+const getDuration=(nf:number)=>{
+  const out=[];
+  for (let i=0;i<4;i++) {
+    const t1=($stamps[nf]||[])[i];
+    const t2=($stamps[nf]||[])[i+1];
+    out.push(t2-t1);
+  }
+  out.push( (($stamps[nf+1]||[])[0]||0) - ($stamps[nf]||[])[4] );
+  return out;
+}
 
 </script>
 
@@ -73,9 +104,13 @@ onMount(()=>{
     <SimpleFolioView {thezip} imageIndex={($nfolio<$totalpages-1)?nextImageIndex(totalpages, $nfolio):-1} {frame} showline={4}/> 
   </td>
   <td class="right-view" style:--sv-swipe-panel-height="95.5%">
-  <TranscriptLayer {frame} blinkline={$nline} linestamped={$linestamped}/>
+  <TranscriptLayer {setPlayTime} {frame} 
+  linedurations={getDuration($nfolio)}
+  editing={($playing||$recording)} blinkline={$nline} linestamped={$linestamped}/>
     <FolioView {thezip} imageIndex={$nfolio} {setImageIndex} bind:frame/>
+    {#if $playing || $recording}
 `   <StampButton {frame} {onStamp}/>
+    {/if}
   </td></tr>
 {/if}
 </tbody>

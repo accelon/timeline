@@ -1,13 +1,21 @@
-import {stamps,theaudio,nfolio,nline,totalpages} from './store.js'
+import {stamps,theaudioplayer,nfolio,nline,totalpages} from './store.js'
 import {get} from 'svelte/store'
 
-export const initstamp=()=>{
-    const _stamps=[]
-    _stamps.length=get(totalpages);
-    for (let i=0;i<_stamps.length;i++) {
-       _stamps[i]=[0,0,0,0,0];
+export const initstamp=(json='')=>{
+    if (json){
+        let _stamps=JSON.parse(json);
+        if (_stamps.timestamps&&_stamps.timestamps.length==get(totalpages)) {
+            stamps.set(_stamps.timestamps);
+            // console.log('stamps loaded',_stamps.timestamps)
+        }
+    } else {
+        const _stamps=[]
+        _stamps.length=get(totalpages);
+        for (let i=0;i<_stamps.length;i++) {
+        _stamps[i]=[0,0,0,0,0];
+        }
+        stamps.set(_stamps);
     }
-    stamps.set(_stamps);
 }
 export const addStamp=()=>{
     const _stamps=get(stamps);
@@ -19,10 +27,10 @@ export const addStamp=()=>{
             nf++;
             nl=0;
         } else {
-            get(theaudio).pause();
+            get(theaudioplayer).pause();
         }
     }
-    _stamps[nf][nl]=get(theaudio).currentTime;
+    _stamps[nf][nl]=get(theaudioplayer).currentTime;
     stamps.set([..._stamps]);
 
     nline.set(nl);
@@ -30,5 +38,5 @@ export const addStamp=()=>{
 }
 
 export const settrack=t=>{
-    get(theaudio).currentTime=t;
+    get(theaudioplayer).currentTime=t;
 }
