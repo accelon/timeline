@@ -6,7 +6,6 @@ const folioline=5;
 
 const stylestring=(o)=>`left:${o.left}px;top:${o.top}px;width:${o.width}px;height:${o.height}px;`
 const stripstyle=(strip)=>{
-    console.log('strip',strip)
     const w=frame.width/folioline;
     let out=[];
     out.push('position:absolute');

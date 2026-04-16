@@ -1,5 +1,6 @@
 <script lang="ts">
 import {theaudioplayer,playing} from './store.js'
+import {playicon,stopicon} from './icon.js'
 
 let {mp3} = $props();
 const togglePlay=()=>{
@@ -21,8 +22,11 @@ const setAudio=(ele:HTMLAudioElement)=>{
 </script>
 
 <audio use:setAudio onplay={onplay} onpause={onpause} >
-    <source src={mp3+'.mp3'}/>
+    <source src={"baudio/"+mp3+".mp3"}/>
 </audio>
 {#if $theaudioplayer}
-    <span aria-hidden="true"  onclick={()=>togglePlay()}>{$playing?'Stop':'Play'}</span>
+    <span class="audioicon" aria-hidden="true"  onclick={()=>togglePlay()}>{@html $playing?stopicon:playicon}</span>
 {/if}
+<style>
+    .audioicon {width:3em;height: 3em;position:absolute;right:0;top:0;cursor:pointer;z-index:10}
+</style>

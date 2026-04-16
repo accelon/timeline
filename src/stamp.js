@@ -1,4 +1,4 @@
-import {stamps,theaudioplayer,nfolio,nline,totalpages} from './store.js'
+import {stamps,theaudioplayer,nfolio,nline,totalpages,dirty} from './store.js'
 import {get} from 'svelte/store'
 
 export const initstamp=(json='')=>{
@@ -35,6 +35,7 @@ export const addStamp=()=>{
 
     nline.set(nl);
     nfolio.set(nf);
+    dirty.set(true);
 }
 
 export const settrack=t=>{

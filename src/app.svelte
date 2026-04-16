@@ -6,12 +6,13 @@
   import { nextImageIndex }  from '../../offtextfolio/folio/ziputils.js';
   import SimpleFolioView  from '../../offtextfolio/folio/simplefolioview.svelte';
   import Toolbar from './toolbar.svelte';
+  import FinalToolbar from './finaltoolbar.svelte';
   import TranscriptLayer from './transcriptlayer.svelte';
   import StampButton from './stampbutton.svelte';
   import {addStamp, initstamp} from './stamp.js'
   import {nfolio,nline,linestamped,totalpages,stamps, playing,recording, theaudioplayer} from './store.js'
   let CacheName='offtextfolio';
-  let thezip=$state(null),mp3=$state(''),stampfile=$state('');
+  let thezip=$state(null),src=$state(''),mp3=$state(''),stampfile=$state('');
   let frame=$state({left:0,top:0,width:0,height:0});
   let downloading=$state('');
   
@@ -24,9 +25,9 @@
   }
   const init=async()=>{
     const params = new URLSearchParams(addressFromUrl());
-    const src=params.get('src')||'sdp1';
-    mp3='baudio/'+(params.get('mp3')||src);
-    stampfile='timestamp/'+(params.get('stamp')||params.get('mp3')||src);
+    src=params.get('src')||'sdp1';
+    mp3=(params.get('mp3')||src);
+    stampfile='timelinejson/'+(params.get('stamp')||params.get('mp3')||src);
 
     let host='folio/';
     const zipfilename=src+'.zip'
@@ -45,6 +46,7 @@
     }).catch(e=>{
         initstamp();
     })
+    
   }
 const loadZip=async (res)=>{
     const buf=await res.arrayBuffer();
@@ -97,11 +99,17 @@ const getDuration=(nf:number)=>{
 <div class="app">
 <table>
 <tbody>
-<tr class="top"><td colspan=2><Toolbar  {mp3}/></td></tr>
+<tr class="top"><td colspan=2>
+  <Toolbar {src} {mp3} msg={downloading}/>
+</td></tr>
 {#if thezip}
 <tr class="bottom">
   <td class="left-view">
+    {#if $nfolio==$totalpages-1}
+    <FinalToolbar {src} {mp3}/>
+    {:else}
     <SimpleFolioView {thezip} imageIndex={($nfolio<$totalpages-1)?nextImageIndex(totalpages, $nfolio):-1} {frame} showline={4}/> 
+    {/if}
   </td>
   <td class="right-view" style:--sv-swipe-panel-height="95.5%">
   <TranscriptLayer {setPlayTime} {frame} 

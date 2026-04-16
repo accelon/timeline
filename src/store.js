@@ -5,6 +5,7 @@ export const recording=writable(false);
 export const nfolio=writable(0);
 export const nline=writable(-1); //0~4
 export const stamps=writable([]);
+export const dirty=writable(false);
 export const totalpages=writable(0);
 
 export const linestamped=derived([stamps,nfolio,nline],([stamps,nfolio,nline])=>{
