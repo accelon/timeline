@@ -1,5 +1,5 @@
 <script>
-let {frame={left:0,top:0,width:0,height:0},setPlayTime,linedurations,
+let {frame={left:0,top:0,width:0,height:0},setPlayTime,
 blinkline=1,linestamped=[0,0,0,0,0,0],editing}=$props();
 let timers=[];
 const folioline=5;
@@ -36,9 +36,11 @@ const lines=[0,1,2,3,4,5]
  + "linestamped linestamped"+linestamped[nline]}
  style={stylelinestamped(frame,nline)}>　　</div>
 {/each}
+{#if editing}
 <div class="transcript" style={stylestring(frame)} >
     <div id="strip" class="strip blinker" style={stripstyle(blinkline)}></div>
 </div>
+{/if}
 <style>
 
 .strip {background:rgba(212, 194, 0, 0.4)}

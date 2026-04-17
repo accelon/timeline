@@ -32,8 +32,9 @@ const uploadstamp=async ()=>{
 {#if $nfolio+1==$totalpages && $dirty && !$playing}
 <button aria-label="Upload stamps" onclick={uploadstamp} class="uploadbtn">{@html uploadicon}</button>
 {/if}
-{errormsg}
+<span class="msg">{errormsg}</span>
 <style>
+    .msg{font-size:2em}
     .uploadbtn {
         background:none;
         border:none;

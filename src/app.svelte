@@ -92,7 +92,10 @@ const getDuration=(nf:number)=>{
   out.push( (($stamps[nf+1]||[])[0]||0) - ($stamps[nf]||[])[4] );
   return out;
 }
-
+const onfolioclick=()=>{
+  const nextimageIndex=($nfolio<$totalpages-1)?nextImageIndex($totalpages, $nfolio):-1;
+  if (nextimageIndex>-1) nfolio.set(nextimageIndex);
+} 
 </script>
 
 
@@ -108,12 +111,11 @@ const getDuration=(nf:number)=>{
     {#if $nfolio==$totalpages-1}
     <FinalToolbar {src} {mp3}/>
     {:else}
-    <SimpleFolioView {thezip} imageIndex={($nfolio<$totalpages-1)?nextImageIndex(totalpages, $nfolio):-1} {frame} showline={4}/> 
+    <SimpleFolioView {onfolioclick} {thezip} imageIndex={($nfolio<$totalpages-1)?nextImageIndex(totalpages, $nfolio):-1} {frame} showline={4}/> 
     {/if}
   </td>
   <td class="right-view" style:--sv-swipe-panel-height="95.5%">
   <TranscriptLayer {setPlayTime} {frame} 
-  linedurations={getDuration($nfolio)}
   editing={($playing||$recording)} blinkline={$nline} linestamped={$linestamped}/>
     <FolioView {thezip} imageIndex={$nfolio} {setImageIndex} bind:frame/>
     {#if $playing || $recording}
