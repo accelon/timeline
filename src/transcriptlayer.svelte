@@ -28,13 +28,13 @@ const stylelinestamped=(frame,nline)=>{
     return out.join(';')
 }
 const lines=[0,1,2,3,4,5]
-
+const nlineLabel=(nline)=>(nline<5)?(nline+1):'1';
 </script>
 {#each lines as nline}
 <div onclick={setPlayTime} aria-hidden="true"
  class={(editing&&nline==blinkline+1?"editing ":"")
  + "linestamped linestamped"+linestamped[nline]}
- style={stylelinestamped(frame,nline)}>　　</div>
+ style={stylelinestamped(frame,nline)}>　{nlineLabel(nline)}　</div>
 {/each}
 {#if editing}
 <div class="transcript" style={stylestring(frame)} >

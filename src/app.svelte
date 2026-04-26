@@ -17,10 +17,10 @@
   let downloading=$state('');
   
   const addressFromUrl=()=>{
-    let hash=window.location.hash;
-    if (hash[0]=='#') hash=hash.slice(1);
-    let address=decodeURI(hash);
-    if (~address.indexOf('%')) address=decodeURIComponent(address)  
+    let q=window.location.search;
+    if (q[0]=='?') q=q.slice(1);
+    let address=decodeURI(q);
+    if (~address.indexOf('%')) address=decodeURIComponent(address) ;
     return address;
   }
   const init=async()=>{
@@ -67,8 +67,7 @@ onMount(()=>{
     const rightview=document.getElementsByClassName('right-view')[0]
     if (!rightview) return;
     const rect=rightview.getBoundingClientRect();
-    frame.top=rect.top;//just set the top left , width, height resolve in folioview
-    frame.left=rect.left;
+    frame={left:rect.left,top:rect.top,width:frame.width,height:frame.height};
   },50)
 })
 const setPlayTime=(e)=>{
@@ -82,16 +81,7 @@ const setPlayTime=(e)=>{
   }
   nline.set(l);
 }
-const getDuration=(nf:number)=>{
-  const out=[];
-  for (let i=0;i<4;i++) {
-    const t1=($stamps[nf]||[])[i];
-    const t2=($stamps[nf]||[])[i+1];
-    out.push(t2-t1);
-  }
-  out.push( (($stamps[nf+1]||[])[0]||0) - ($stamps[nf]||[])[4] );
-  return out;
-}
+
 const onfolioclick=()=>{
   const nextimageIndex=($nfolio<$totalpages-1)?nextImageIndex($totalpages, $nfolio):-1;
   if (nextimageIndex>-1) nfolio.set(nextimageIndex);
