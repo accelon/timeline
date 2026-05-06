@@ -27,7 +27,12 @@
     const params = new URLSearchParams(addressFromUrl());
     src=params.get('src')||'sdp1';
     mp3=(params.get('mp3')||src);
-    stampfile='timelinejson/'+(params.get('stamp')||params.get('mp3')||src);
+    let dir='timelinejson/';
+    
+    const filename=(params.get('stamp')||params.get('mp3')||src);
+    const [m,prefix,num]=filename.match(/([a-z]+)(\d*)$/);
+    if (num) dir+=prefix+'/';
+    stampfile=dir+filename;
 
     let host='folio/';
     const zipfilename=src+'.zip'
@@ -41,7 +46,7 @@
     }
     await loadZip(res);
     downloading='';
-    fetch(stampfile+'.json').then(res=>res.text()).then(text=>{        
+    fetch(stampfile+'.json').then(res=>res.text()).then(text=>{
         initstamp(text);
     }).catch(e=>{
         initstamp();
@@ -53,6 +58,7 @@ const loadZip=async (res)=>{
     const zip=new ZipStore(buf);
     thezip =zip;
     totalpages.set(thezip.files.length);
+    console.log('zip loaded',thezip.files.length);
 }
 const onStamp=()=>{
   addStamp();
@@ -61,20 +67,22 @@ const setImageIndex=(idx:number)=>{
   nfolio.set(idx)
   nline.set(-1)
 }
-onMount(()=>{
-  init();
+onMount(async ()=>{
+  await init();
   setTimeout(()=>{
     const rightview=document.getElementsByClassName('right-view')[0]
     if (!rightview) return;
     const rect=rightview.getBoundingClientRect();
     frame={left:rect.left,top:rect.top,width:frame.width,height:frame.height};
-  },50)
+  },100)
+
 })
+
 const setPlayTime=(e)=>{
   const line=Math.floor((e.clientX-frame.left)/(frame.width/5));
   if (line<0||line>5) return;
-  const l=$totalpages-line;
-  const t=($stamps[$nfolio]||[])[l];
+  const l=5-line-1;
+  const t=($stamps[$nfolio]||[])[l]||0;
   $theaudioplayer.currentTime=t;
   if (!$playing) {
     $theaudioplayer.play();

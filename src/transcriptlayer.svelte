@@ -19,7 +19,7 @@ const stylelinestamped=(frame,nline)=>{
     const w=frame.width/5;
     let out=[];
     out.push('position:absolute');
-    out.push('top:'+(frame.top-35)+'px');
+    out.push('top:'+(frame.top-40)+'px');
     if (nline<5) {
         out.push('left:'+(w/8+frame.left+Math.floor( (folioline-nline-1)*w))+'px');
     } else { //next page first line
@@ -34,7 +34,7 @@ const nlineLabel=(nline)=>(nline<5)?(nline+1):'1';
 <div onclick={setPlayTime} aria-hidden="true"
  class={(editing&&nline==blinkline+1?"editing ":"")
  + "linestamped linestamped"+linestamped[nline]}
- style={stylelinestamped(frame,nline)}>　{nlineLabel(nline)}　</div>
+ style={stylelinestamped(frame,nline)}>&nbsp;{nlineLabel(nline)}&nbsp;</div>
 {/each}
 {#if editing}
 <div class="transcript" style={stylestring(frame)} >

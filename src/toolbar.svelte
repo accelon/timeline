@@ -1,8 +1,7 @@
 <script lang="ts">
 import AudioPlayer from './audioplayer.svelte'
-import StampIndicator from './stampindicator.svelte'
 let {src,mp3,msg=''}=$props();
-import {nfolio,nline,totalpages} from './store.js'
+import {nfolio,nline,totalpages,theaudioplayer,playing} from './store.js'
 let editingfolio=$state(false);
 const editfolio=()=>{
     editingfolio=true;

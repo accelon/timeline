@@ -4,7 +4,7 @@ import {get} from 'svelte/store'
 export const initstamp=(json='')=>{
     if (json){
         let _stamps=JSON.parse(json);
-        if (_stamps.timestamps&&_stamps.timestamps.length==get(totalpages)) {
+        if (_stamps?.timestamps?.length) {
             stamps.set(_stamps.timestamps);
             // console.log('stamps loaded',_stamps.timestamps)
         }
