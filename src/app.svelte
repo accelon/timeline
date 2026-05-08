@@ -12,7 +12,7 @@
   import {addStamp, initstamp} from './stamp.js'
   import {nfolio,nline,linestamped,totalpages,stamps, playing,recording, theaudioplayer} from './store.js'
   let CacheName='offtextfolio';
-  let thezip=$state(null),src=$state(''),mp3=$state(''),stampfile=$state('');
+  let thezip=$state(null),src=$state(''),mp3=$state(''),contributor=$state(''),stampfile=$state('');
   let frame=$state({left:0,top:0,width:0,height:0});
   let downloading=$state('');
   
@@ -27,6 +27,7 @@
     const params = new URLSearchParams(addressFromUrl());
     src=params.get('src')||'sdp1';
     mp3=(params.get('mp3')||src);
+    contributor=(params.get('contributor')||"anonymous");
     let dir='timelinejson/';
     
     const filename=(params.get('stamp')||params.get('mp3')||src);
@@ -107,7 +108,7 @@ const onfolioclick=()=>{
 <tr class="bottom">
   <td class="left-view">
     {#if $nfolio==$totalpages-1}
-    <FinalToolbar {src} {mp3}/>
+    <FinalToolbar {src} {mp3} {contributor}/>
     {:else}
     <SimpleFolioView {onfolioclick} {thezip} imageIndex={($nfolio<$totalpages-1)?nextImageIndex(totalpages, $nfolio):-1} {frame} showline={4}/> 
     {/if}

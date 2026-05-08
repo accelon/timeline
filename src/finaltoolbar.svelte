@@ -2,10 +2,10 @@
 import {uploadicon} from './icon.js'
 import {buildtimestampjson} from '../../offtextfolio/timestamp.js'
 import {nfolio,playing,totalpages,stamps,dirty} from './store.js'
-let {mp3,src}=$props();
+let {mp3,src,contributor}=$props();
 let errormsg=$state('');
 const uploadstamp=async ()=>{
-    const jsonStr = JSON.stringify(buildtimestampjson($stamps,src,mp3),(key, value) => {
+    const jsonStr = JSON.stringify(buildtimestampjson($stamps,src,mp3,contributor),(key, value) => {
     if (typeof value === 'number' && !Number.isInteger(value)) {
       return parseFloat(value.toFixed(2));
     }

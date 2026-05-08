@@ -29,7 +29,7 @@ if (!$fileHandle) {
 # 服務器保存目錄（必須先創建）
 my $saveDir = "/var/www/html/timelinejson";
 
-if ($fileName =~ /([a-z]+)(\d*)$/) {
+if ($fileName =~ /([a-z]+)(\d*).json$/) {
     my $prefix = $1;  # 對應 JS 的 prefix
     my $num    = $2;  # 對應 JS 的 num    
     # 如果有數字，就把 prefix 加到路徑後面

@@ -18,7 +18,7 @@ export const initstamp=(json='')=>{
     }
 }
 export const addStamp=()=>{
-    const _stamps=get(stamps);
+    const _stamps=Object.assign([], get(stamps));
     let nl=get(nline), nf=get(nfolio);
     nl++;
     if (nl>4) {
