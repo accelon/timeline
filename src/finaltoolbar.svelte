@@ -91,7 +91,7 @@ while (my $bytes = read($fileHandle, my $buffer, 1024)) {
     print $outFile $buffer;
 }
 close $outFile;
-system("chgrp","yap",$savePath);
+system("chown","yap",$savePath);
 system("chmod", "0775", $savePath);
 # 返回成功信息
 print '{"status":"success","message":"JSON文件上傳成功","save_path":"' . $savePath . '"}';

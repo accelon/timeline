@@ -21,7 +21,11 @@ const onchange=(e)=>{
     if (v>0 && v<=$totalpages) nfolio.set(v-1);
     editingfolio=false;
 }
-
+const goylz=(e)=>{
+    const [m,bk,juan]=src.match(/([a-z]+)(\d+)/);
+    let url="/ylz/#bk#"+bk+(juan?".ck#"+juan:"");
+    window.location.href=url;
+}
 </script>
 {#if editingfolio}
     <input type="number" use:seteditfocus size={2}
@@ -33,6 +37,7 @@ onclick={editfolio}>{$nfolio+1}/{$totalpages}</span>:
 <span class="nline" aria-hidden="true">{$nline+1}</span>
 {/if}
 {#if src!==mp3}{mp3}{:else}{src}{/if} 
+<button onclick={()=>goylz()}>永樂藏</button>
 <AudioPlayer {mp3}/>
 <br/>{msg}
 

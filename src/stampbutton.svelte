@@ -7,14 +7,16 @@ const stylestring=()=>{
     out.push('top:'+(frame.top+frame.height/2)+'px');
     return out;
 }
+let angle=0;
 const onmousedown=e=>{
     const out=stylestring();
-    out.push('fill:green');
+    out.push('fill:green;transform: rotate('+angle+'deg);');
+    angle+=7;
     stamper.setAttribute('style', out.join(';'));
 }
 const onmouseup=e=>{
     const out=stylestring();
-    out.push('fill:black');
+    out.push('fill:black;transform: rotate('+angle+'deg);');
     stamper.setAttribute('style', out.join(';'));
     onStamp&&onStamp();
 }

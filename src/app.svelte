@@ -27,7 +27,7 @@
     const params = new URLSearchParams(addressFromUrl());
     src=params.get('src')||'sdp1';
     mp3=(params.get('mp3')||src);
-    contributor=(params.get('contributor')||"anonymous");
+    contributor=(params.get('contributor')||"ANONYMOUS").toUpperCase();
     let dir='timelinejson/';
     
     const filename=(params.get('stamp')||params.get('mp3')||src);
@@ -78,12 +78,13 @@ onMount(async ()=>{
   },100)
 
 })
-
+const backwardtime=0.5
 const setPlayTime=(e)=>{
   const line=Math.floor((e.clientX-frame.left)/(frame.width/5));
   if (line<0||line>5) return;
   const l=5-line-1;
-  const t=($stamps[$nfolio]||[])[l]||0;
+  let t=($stamps[$nfolio]||[])[l]||0;
+  //if (t>backwardtime) t-=backwardtime;
   $theaudioplayer.currentTime=t;
   if (!$playing) {
     $theaudioplayer.play();
