@@ -29,7 +29,7 @@ const uploadstamp=async ()=>{
 }
 
 </script>
-{#if $nfolio+1==$totalpages && $dirty && !$playing}
+{#if $nfolio+1==$totalpages && $dirty && !$playing && contributor && contributor!=='ANONYMOUS'}
 <button aria-label="Upload stamps" onclick={uploadstamp} class="uploadbtn">{@html uploadicon}</button>
 {/if}
 <span class="msg">{errormsg}</span>
